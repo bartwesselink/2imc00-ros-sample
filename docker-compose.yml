@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  node_web_controller:
+    build:
+      context: web_controller/
+      dockerfile: ../base/Dockerfile
+      args:
+        NODE_NAME: web_controller
+    ports:
+      - 8080:8080
+
+
+  node_cmd_wheel:
+    build:
+      context: cmd_wheel/
+      dockerfile: ../base/Dockerfile
+      args:
+        NODE_NAME: cmd_wheel
