@@ -4,7 +4,7 @@
   <name>cmd_wheel</name>
   <version>1.0.0</version>
   <description>Command line wheel.</description>
-  <maintainer email="b.wesselink@recognize.nl">b.wesselink</maintainer>
+  <maintainer email="b.b.a.wesselink@student.tue.nl">b.wesselink</maintainer>
   <license>LGPL-3.0</license>
 
   <exec_depend>rclpy</exec_depend>

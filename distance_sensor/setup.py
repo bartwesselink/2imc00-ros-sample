@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'cmd_wheel'
+package_name = 'distance_sensor'
 
 setup(
     name=package_name,
@@ -15,12 +15,12 @@ setup(
     zip_safe=True,
     maintainer='b.wesselink',
     maintainer_email='b.b.a.wesselink@student.tue.nl',
-    description='Command line wheel.',
+    description='Sensor that emits arbitrary values.',
     license='LGPL-3.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                'interface = cmd_wheel.wheel_member_function:main',
+                'interface = distance_sensor.sensor_member_function:main',
         ],
     },
 )

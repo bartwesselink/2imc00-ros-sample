@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>web_controller</name>
+  <name>distance_sensor</name>
   <version>1.0.0</version>
-  <description>Web interface for command line wheel.</description>
+  <description>Sensor that emits arbitrary values.</description>
   <maintainer email="b.b.a.wesselink@student.tue.nl">b.wesselink</maintainer>
   <license>LGPL-3.0</license>
 

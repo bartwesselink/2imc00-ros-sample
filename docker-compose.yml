@@ -9,10 +9,16 @@ services:
     ports:
       - 8080:8080
 
-
   node_cmd_wheel:
     build:
       context: cmd_wheel/
       dockerfile: ../base/Dockerfile
       args:
         NODE_NAME: cmd_wheel
+
+  node_distance_sensor:
+    build:
+      context: distance_sensor/
+      dockerfile: ../base/Dockerfile
+      args:
+        NODE_NAME: distance_sensor

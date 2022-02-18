@@ -14,7 +14,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='b.wesselink',
-    maintainer_email='b.wesselink@recognize.nl',
+    maintainer_email='b.b.a.wesselink@student.tue.nl',
     description='Web interface for command line wheel.',
     license='LGPL-3.0',
     tests_require=['pytest'],
