@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.distance {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+}
+
+.map {
+    --size: 20;
+
+    display: grid;
+    width: 50vh;
+    height: 50vh;
+    border: 0.25rem solid #34495e;
+    grid-template-rows: repeat(var(--size), 1fr);
+    grid-template-columns: repeat(var(--size), 1fr);
+}
+
+.tile {
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-image: url(/assets/grass.png);
+    position: relative;
+}
+
+.crate::before {
+    display: block;
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-size: 90% 90%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url(/assets/crate.png);
+}
+
+.robot::after {
+    display: block;
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-size: 90% 90%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url(/assets/tank.png);
+    transform: rotate(var(--rotate, 0deg));
+}
+
+.robot-1 {
+    --rotate: -90deg;
+}
+
+.robot-2 {
+    --rotate: 0
+}
+
+.robot-3 {
+    --rotate: 90deg;
+}
+
+.robot-4 {
+    --rotate: 180deg;
+}

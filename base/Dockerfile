@@ -16,8 +16,6 @@ RUN mkdir -p /app \
 # copy required files
 COPY . /app/$NODE_NAME/
 
-RUN ls /app && pwd
-
 # build package
 RUN rosdep install -i --from-path /app --rosdistro foxy -y \
  && cd /app \

@@ -1,7 +1,9 @@
 # ROS Sample
-This is a ROS-sample project that runs with Docker. It starts two nodes:
-* A web interface that contains two buttons
-* A node that prints the state of a wheel (as a position between 0 and 80) to the command line
+This is a ROS-sample project that runs with Docker. It starts four nodes:
+* A web interface that visualizes the environment, the robot and possible obstacles
+* A node that scans the environment (emits a stub environment map)
+* A node that controls the robot platform, can receive commands and emits the position and rotation of the robot
+* A node that computes the distance till the next object in front of the robot
 
 ## Requirements
 * Docker

@@ -2,67 +2,92 @@ import rclpy
 from rclpy.node import Node
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+import os
+import json
+import threading
 
-from std_msgs.msg import Bool
+from std_msgs.msg import Int16MultiArray, Int16
+from bottle import Bottle, route, run, get, static_file, template
 
-class SimpleServer(BaseHTTPRequestHandler):
-    def __init__(self, controller):
-        self.controller = controller
+class Server:
+    def __init__(self, host, port, controller):
+        self._host = host
+        self._port = port
+        self._controller = controller
+        self._root = os.path.dirname(os.path.realpath(__file__)) + "/../../../../static"
+        self._app = Bottle()
+        self._route()
 
-    def __call__(self, *args, **kwargs):
-        """ Handle a request """
-        super().__init__(*args, **kwargs)
+    def _route(self):
+        self._app.route('/', method="GET", callback=self._index)
+        self._app.route('/api/map', method="GET", callback=self._map)
+        self._app.route('/assets/<filepath:re:.*\.(jpg|png|gif|ico|svg|css|js|html)>', method="GET", callback=self._assets)
 
-    def do_GET(self):
-        if self.path == '/api/left':
-            self.controller.go_left()
+    def start(self):
+        t = threading.Thread(target=self._run)
+        t.setDaemon(True)
+        t.start()
+    
+    def _run(self):
+        self._app.run(host=self._host, port=self._port)
 
-        if self.path == '/api/right':
-            self.controller.go_right()
+    def _index(self):
+        return static_file("index.html", root=self._root)
 
-        body = '<html><body><button onclick="fetch(\'/api/left\');">&lt;</button> <button onclick="fetch(\'/api/right\');">&gt;</button></body></html>'.encode('ascii')
+    def _map(self):
+        return json.dumps(dict({ 'environment': self._controller.current_environment, 'distance': self._controller.distance, 'robot': { 'x': self._controller.x, 'y': self._controller.y, 'rotation': self._controller.rotation } }))
 
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+    def _assets(self, filepath):
+        return static_file(filepath, root=self._root + '/assets/')
 
-class SimpleWebController(Node):
+class WebController(Node):
 
     def __init__(self):
-        super().__init__('simple_web_controller')
-        self.publisher_left = self.create_publisher(Bool, 'left', 10)
-        self.publisher_right = self.create_publisher(Bool, 'right', 10)
+        super().__init__('web_controller')
+        self.current_environment = []
+        self.x = 0
+        self.y = 0
+        self.rotation = 0
+        self.distance = -1
+
+        self.environment_subscription = self.create_subscription(
+            Int16MultiArray,
+            'environment',
+            self.handle_environment,
+            10)
+
+        self.x_subscription = self.create_subscription(Int16, 'robot_x', self.handle_x, 10)
+        self.y_subscription = self.create_subscription(Int16, 'robot_y', self.handle_y, 10)
+        self.rotation_subscription = self.create_subscription(Int16, 'robot_rotation', self.handle_rotation, 10)
+        self.distance_subscription = self.create_subscription(Int16, 'distance', self.handle_distance, 10)
 
         self.start_server()
 
+    def handle_x(self, msg):
+        self.x = msg.data
+
+    def handle_y(self, msg):
+        self.y = msg.data
+
+    def handle_distance(self, msg):
+        self.distance = msg.data
+
+    def handle_rotation(self, msg):
+        self.rotation = msg.data
+
+    def handle_environment(self, msg):
+        self.current_environment = list(msg.data)
+
     def start_server(self):
         self.get_logger().info('Starting web server')
-        self.web_server = HTTPServer(("0.0.0.0", 8080), SimpleServer(self))
-
-        try:
-            self.web_server.serve_forever()
-        except KeyboardInterrupt:
-            pass
-
-        webServer.server_close()
-        self.get_logger().info('Stopped server')
-
-    def go_left(self):
-        msg = Bool()
-        msg.data = True
-        self.publisher_left.publish(msg)
-
-    def go_right(self):
-        msg = Bool()
-        msg.data = True
-        self.publisher_right.publish(msg)
+        
+        server = Server(host='0.0.0.0', port=8080, controller=self)
+        server.start()
 
 def main(args=None):
     rclpy.init(args=args)
 
-    web_controller = SimpleWebController()
+    web_controller = WebController()
 
     rclpy.spin(web_controller)
 

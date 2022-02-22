@@ -9,12 +9,12 @@ services:
     ports:
       - 8080:8080
 
-  node_cmd_wheel:
+  node_robot_platform:
     build:
-      context: cmd_wheel/
+      context: robot_platform/
       dockerfile: ../base/Dockerfile
       args:
-        NODE_NAME: cmd_wheel
+        NODE_NAME: robot_platform
 
   node_distance_sensor:
     build:
@@ -22,3 +22,10 @@ services:
       dockerfile: ../base/Dockerfile
       args:
         NODE_NAME: distance_sensor
+
+  node_environment_scanner:
+    build:
+      context: environment_scanner/
+      dockerfile: ../base/Dockerfile
+      args:
+        NODE_NAME: environment_scanner

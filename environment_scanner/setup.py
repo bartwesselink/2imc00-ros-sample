@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'cmd_wheel'
+package_name = 'environment_scanner'
 
 setup(
     name=package_name,
@@ -15,12 +15,12 @@ setup(
     zip_safe=True,
     maintainer='b.wesselink',
     maintainer_email='b.b.a.wesselink@student.tue.nl',
-    description='Command line wheel.',
+    description='Scans and publishes an environment map.',
     license='LGPL-3.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                'interface = cmd_wheel.wheel_member_function:main',
+                'interface = environment_scanner.scanner_member_function:main',
         ],
     },
 )
