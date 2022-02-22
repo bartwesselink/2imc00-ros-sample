@@ -11,3 +11,10 @@ This is a ROS-sample project that runs with Docker. It starts four nodes:
 ## Getting started
 * Run `docker compose up`
 * The interface should be available on `localhost:8080`!
+
+## Controller
+A controller is still required. The controller should behave like this:
+
+```mermaid
+
+```
