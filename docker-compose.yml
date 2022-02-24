@@ -29,3 +29,11 @@ services:
       dockerfile: ../base/Dockerfile
       args:
         NODE_NAME: environment_scanner
+
+  node_controller:
+    build:
+      context: controller/
+      dockerfile: ../base/Dockerfile
+      args:
+        NODE_NAME: controller
+

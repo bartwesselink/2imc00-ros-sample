@@ -13,16 +13,18 @@ This is a ROS-sample project that runs with Docker. It starts four nodes:
 * The interface should be available on `localhost:8080`!
 
 ## Controller
-A controller is still required. The controller should behave like this:
+The behaviour of the controller can roughly be defined as follows:
 
 ```mermaid
 graph LR;
-      Down-->|distance = 0 / rotate_right|Right;
-      Right-->|distance = 0 / rotate_up|Up;
-      Up-->|distance = 0 / rotate_left|Left;
-      Left-->|distance = 0 / rotate_down|Down;
-      Down-->|distance > 0 / move_forward|Down;
-      Right-->|distance > 0 / move_forward|Right;
-      Up-->|distance > 0 / move_forward|Up;
-      Left-->|distance > 0 / move_forward|Left;
+    Moving-->|distance = 0|Rotating;
+    Rotating-->|distance > 0|Moving;
+    Moving-->|distance > 0 / move_forward|Moving;
+    Rotating-->|distance = 0 / rotate_right|Rotating;
+    Rotating-->|distance = 0 / rotate_left|Rotating;
+    Rotating-->|distance = 0 / rotate_up|Rotating;
+    Rotating-->|distance = 0 / rotate_down|Rotating;
 ```
+
+## Sample
+![Web Interface Screenshot](./assets/image.png)

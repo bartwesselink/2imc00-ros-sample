@@ -22,7 +22,7 @@ const updateData = async () => {
 
     distanceValue.innerText = distance;
 
-    setTimeout(updateData, 500);
+    setTimeout(updateData, 200);
 };
 
 updateData();

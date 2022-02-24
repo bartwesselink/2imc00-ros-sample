@@ -18,8 +18,9 @@ COPY . /app/$NODE_NAME/
 
 # build package
 RUN rosdep install -i --from-path /app --rosdistro foxy -y \
+ && . /opt/ros/foxy/setup.sh \
  && cd /app \
- && pip3 install -r /app/$NODE_NAME/requirements.txt  \
+ && (pip3 install -r /app/$NODE_NAME/requirements.txt || true) \
  && colcon build --packages-select $NODE_NAME --merge-install
 
 # source entrypoint

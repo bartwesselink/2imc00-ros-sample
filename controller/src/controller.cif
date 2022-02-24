@@ -1,0 +1,92 @@
+plant ROS_Node_Robot_Platform:
+	uncontrollable u_robot_x, u_robot_y, u_robot_rotation;
+	controllable c_move_forward, c_rotate_up, c_rotate_right, c_rotate_left, c_rotate_down;
+
+	location right:
+	initial; marked;
+	edge c_move_forward;
+
+	edge c_rotate_right goto right;
+	edge c_rotate_up goto up;
+	edge c_rotate_left goto left;
+	edge c_rotate_down goto down;
+
+	location up:
+	edge c_move_forward;
+
+	edge c_rotate_right goto right;
+	edge c_rotate_up goto up;
+	edge c_rotate_left goto left;
+	edge c_rotate_down goto down;
+
+	location left:
+	edge c_move_forward;
+
+	edge c_rotate_right goto right;
+	edge c_rotate_up goto up;
+	edge c_rotate_left goto left;
+	edge c_rotate_down goto down;
+
+	location down:
+	edge c_move_forward;
+
+	edge c_rotate_right goto right;
+	edge c_rotate_up goto up;
+	edge c_rotate_left goto left;
+	edge c_rotate_down goto down;
+end
+
+plant ROS_Distance_Sensor:
+	disc int[0..20] distance = 0;
+
+	// why can't you use a channel
+  	uncontrollable u_distance_0, u_distance_1, u_distance_2, u_distance_3, u_distance_4, u_distance_5, u_distance_6, u_distance_7, u_distance_8, u_distance_9, u_distance_10, u_distance_11, u_distance_12, u_distance_13, u_distance_14, u_distance_15, u_distance_16, u_distance_17, u_distance_18, u_distance_19, u_distance_20;
+
+	location:
+	initial; marked;
+	edge u_distance_0 do distance := 0;
+	edge u_distance_1 do distance := 1;
+	edge u_distance_2 do distance := 2;
+	edge u_distance_3 do distance := 3;
+	edge u_distance_4 do distance := 4;
+	edge u_distance_5 do distance := 5;
+	edge u_distance_6 do distance := 6;
+	edge u_distance_7 do distance := 7;
+	edge u_distance_8 do distance := 8;
+	edge u_distance_9 do distance := 9;
+	edge u_distance_10 do distance := 10;
+	edge u_distance_11 do distance := 11;
+	edge u_distance_12 do distance := 12;
+	edge u_distance_13 do distance := 13;
+	edge u_distance_14 do distance := 14;
+	edge u_distance_15 do distance := 15;
+	edge u_distance_16 do distance := 16;
+	edge u_distance_17 do distance := 17;
+	edge u_distance_18 do distance := 18;
+	edge u_distance_19 do distance := 19;
+	edge u_distance_20 do distance := 20;
+end
+
+plant ROS_Environment_Scanner:
+	uncontrollable u_environment;
+
+	location:
+	initial; marked;
+end
+
+
+plant ROS_Web_Controller:
+	controllable c_environment, c_robot_x, c_robot_y, c_robot_rotation;
+
+	location:
+	initial; marked;
+end
+
+// Move forward if safe
+requirement invariant ROS_Node_Robot_Platform.c_move_forward needs ROS_Distance_Sensor.distance > 0;
+
+// Rotation
+requirement invariant ROS_Node_Robot_Platform.c_rotate_left needs ROS_Distance_Sensor.distance = 0;
+requirement invariant ROS_Node_Robot_Platform.c_rotate_right needs ROS_Distance_Sensor.distance = 0;
+requirement invariant ROS_Node_Robot_Platform.c_rotate_up needs ROS_Distance_Sensor.distance = 0;
+requirement invariant ROS_Node_Robot_Platform.c_rotate_down needs ROS_Distance_Sensor.distance = 0;

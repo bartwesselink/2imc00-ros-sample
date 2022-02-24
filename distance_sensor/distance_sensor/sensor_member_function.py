@@ -10,16 +10,6 @@ class DistanceSensor(Node):
     def __init__(self):
         super().__init__('distance_sensor')
         self.publisher_value = self.create_publisher(Int16, 'distance', 10)
-        self.values = [1000.0,
-            9000.0,
-            8000.0,
-            7000.0,
-            5000.0,
-            1000.0,
-            500.0,
-            100.0
-        ]
-
         self.start_timer()
 
         self.current_environment = []
@@ -118,7 +108,7 @@ class DistanceSensor(Node):
 
     def calculate_distance(self):
         if self.x == 0 or self.y == 0 or len(self.current_environment) == 0:
-            return -1
+            return 0
 
         if self.rotation == 1:
             return self.distance_to_right()
@@ -133,7 +123,7 @@ class DistanceSensor(Node):
             return self.distance_to_top()
 
         # calculate distance
-        return -1
+        return 0
 
     def emit_value(self, value):
         msg = Int16()

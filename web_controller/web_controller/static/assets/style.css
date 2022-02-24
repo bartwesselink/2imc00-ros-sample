@@ -64,7 +64,7 @@ body {
     background-size: 90% 90%;
     background-position: center center;
     background-repeat: no-repeat;
-    background-image: url(/assets/tank.png);
+    background-image: url(/2imc00-ros-sample/web_controller/web_controller/static//assets/tank.png);
     transform: rotate(var(--rotate, 0deg));
 }
 
