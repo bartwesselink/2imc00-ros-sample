@@ -1,4 +1,6 @@
 const element = document.querySelector('.map');
+const robotElement = document.querySelector('.robot');
+const wrapperElement = document.querySelector('.robot');
 const distanceValue = document.querySelector('.distance-value');
 
 const updateData = async () => {
@@ -7,22 +9,24 @@ const updateData = async () => {
         .catch(() => setTimeout(updateData, 1000));
 
     const size = Math.sqrt(environment.length);
-    element.style.setProperty('--size', size);
+    wrapperElement.style.setProperty('--size', size);
 
     element.innerHTML = environment
         .map((it, index) => {
             const y = 20 - (Math.floor(index / size));
             const x = (index % size) + 1;
 
-            const isRobot = robot.x === x && robot.y === y;
-
-            return `<div class="tile ${it === 1 ? 'crate' : ''} ${isRobot ? `robot robot-${robot.rotation}` : ''}"></div>`
+            return `<div class="tile ${it === 1 ? 'crate' : ''}"></div>`
         })
         .join('');
 
+    robotElement.style.setProperty('--rotate', robot.rotation);
+    robotElement.style.setProperty('--x', robot.x);
+    robotElement.style.setProperty('--y', robot.y);
+
     distanceValue.innerText = distance;
 
-    setTimeout(updateData, 200);
+    setTimeout(updateData, 500);
 };
 
 updateData();
