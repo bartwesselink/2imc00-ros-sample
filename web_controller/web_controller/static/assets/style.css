@@ -38,6 +38,10 @@ body {
     position: relative;
 }
 
+.transition {
+    transition: transform ease-in-out 500ms;
+}
+
 .crate::before {
     display: block;
     content: '';
@@ -74,7 +78,6 @@ body {
     transform-origin: center;
     transform: translateX(var(--translate-x)) translateY(var(--translate-y)) rotate(calc(-90deg + calc(calc(var(--rotate, 1) - 1) * 90deg))) ;
     z-index: 2;
-    transition: transform ease-in-out 500ms;
     will-change: transform;
 }
 

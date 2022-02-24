@@ -26,6 +26,8 @@ const updateData = async () => {
 
     distanceValue.innerText = distance;
 
+    setTimeout(() => robotElement.classList.add('transition'), 10);
+
     setTimeout(updateData, 500);
 };
 
