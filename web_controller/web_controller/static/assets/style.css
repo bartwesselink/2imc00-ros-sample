@@ -67,10 +67,10 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    background-size: 90% 90%;
+    background-size: 100% 100%;
     background-position: center center;
     background-repeat: no-repeat;
-    background-image: url(/assets/tank.png);
+    background-image: url(/assets/car.png);
     transform-origin: center;
     transform: translateX(var(--translate-x)) translateY(var(--translate-y)) rotate(calc(-90deg + calc(calc(var(--rotate, 1) - 1) * 90deg))) ;
     z-index: 2;
