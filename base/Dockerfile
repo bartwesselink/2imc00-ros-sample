@@ -1,5 +1,6 @@
 FROM ros:foxy
 ARG NODE_NAME
+ARG BUILD_INTERFACES=false
 ENV NODE_NAME ${NODE_NAME}
 
 # define global environment
@@ -13,15 +14,25 @@ RUN mkdir -p /app \
   && apt-get autoremove --yes \
   && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-# copy required files
-COPY . /app/$NODE_NAME/
+WORKDIR /app
 
-# build package
+# copy required files
+COPY ./$NODE_NAME/ /app/$NODE_NAME/
+
+# copy interfaces, note that they might not be built depending on the argument
+COPY ./communication_interfaces/ /app/communication_interfaces/
+
+# build package(s)
 RUN rosdep install -i --from-path /app --rosdistro foxy -y \
+ && (pip3 install -r /app/$NODE_NAME/requirements.txt || true)
+
+RUN $BUILD_INTERFACES \
  && . /opt/ros/foxy/setup.sh \
- && cd /app \
- && (pip3 install -r /app/$NODE_NAME/requirements.txt || true) \
- && colcon build --packages-select $NODE_NAME --merge-install
+ && colcon build --packages-select communication_interfaces --merge-install \
+ || true
+
+RUN . /opt/ros/foxy/setup.sh \
+  && colcon build --packages-select $NODE_NAME --merge-install
 
 # source entrypoint
 RUN sed --in-place --expression \

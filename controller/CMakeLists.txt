@@ -12,14 +12,20 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(communication_interfaces REQUIRED)
 
+add_library(gpp_wrapper include/controller/gpp_wrapper.c)
 add_library(gpp_engine include/controller/gpp_engine.c)
-
 add_executable(interface src/controller_member_function.cpp)
-target_link_libraries(interface gpp_engine)
 
-ament_target_dependencies(interface rclcpp std_msgs)
+add_definitions(-DMAX_NUM_EVENTS=0)
+
+target_link_libraries(gpp_wrapper gpp_engine)
+target_link_libraries(interface gpp_wrapper)
+
+ament_target_dependencies(interface rclcpp std_msgs rclcpp_action communication_interfaces)
 
 install(TARGETS
         interface

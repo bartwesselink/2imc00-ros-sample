@@ -12,12 +12,7 @@ const updateData = async () => {
     wrapperElement.style.setProperty('--size', size);
 
     element.innerHTML = environment
-        .map((it, index) => {
-            const y = 20 - (Math.floor(index / size));
-            const x = (index % size) + 1;
-
-            return `<div class="tile ${it === 1 ? 'crate' : ''}"></div>`
-        })
+        .map((it, index) => `<div class="tile ${it > 0 ? 'crate' : ''}" style="--visibility: ${it}" ></div>`)
         .join('');
 
     robotElement.style.setProperty('--rotate', robot.rotation);

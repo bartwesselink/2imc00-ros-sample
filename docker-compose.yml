@@ -1,39 +1,56 @@
 version: "3.9"
 services:
   node_web_controller:
+    restart: unless-stopped
     build:
-      context: web_controller/
-      dockerfile: ../base/Dockerfile
+      context: .
+      dockerfile: ./base/Dockerfile
       args:
         NODE_NAME: web_controller
     ports:
-      - 8080:8080
+      - "8080:8080"
 
   node_robot_platform:
+    restart: unless-stopped
     build:
-      context: robot_platform/
-      dockerfile: ../base/Dockerfile
+      context: .
+      dockerfile: ./base/Dockerfile
       args:
         NODE_NAME: robot_platform
+        BUILD_INTERFACES: "true"
 
   node_distance_sensor:
+    restart: unless-stopped
     build:
-      context: distance_sensor/
-      dockerfile: ../base/Dockerfile
+      context: .
+      dockerfile: ./base/Dockerfile
       args:
         NODE_NAME: distance_sensor
 
   node_environment_scanner:
+    restart: unless-stopped
     build:
-      context: environment_scanner/
-      dockerfile: ../base/Dockerfile
+      context: .
+      dockerfile: ./base/Dockerfile
       args:
         NODE_NAME: environment_scanner
+        BUILD_INTERFACES: "true"
 
   node_controller:
+    restart: unless-stopped
     build:
-      context: controller/
-      dockerfile: ../base/Dockerfile
+      context: .
+      dockerfile: ./base/Dockerfile
       args:
         NODE_NAME: controller
+        BUILD_INTERFACES: "true"
+
+  node_obstacle_destroyer:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./base/Dockerfile
+      args:
+        NODE_NAME: obstacle_destroyer
+        BUILD_INTERFACES: "true"
 

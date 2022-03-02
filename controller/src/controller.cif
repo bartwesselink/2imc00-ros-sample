@@ -11,7 +11,7 @@ plant ROS_Node_Robot_Platform:
 	edge c_rotate_left goto left;
 	edge c_rotate_down goto down;
 
-	location up:
+	location left:
 	edge c_move_forward;
 
 	edge c_rotate_right goto right;
@@ -19,7 +19,7 @@ plant ROS_Node_Robot_Platform:
 	edge c_rotate_left goto left;
 	edge c_rotate_down goto down;
 
-	location left:
+	location up:
 	edge c_move_forward;
 
 	edge c_rotate_right goto right;
@@ -37,34 +37,14 @@ plant ROS_Node_Robot_Platform:
 end
 
 plant ROS_Distance_Sensor:
-	disc int[0..20] distance = 0;
+    input int[0..20] i_distance;
+	disc int[0..20] distance = 20;
 
-	// why can't you use a channel
-  	uncontrollable u_distance_0, u_distance_1, u_distance_2, u_distance_3, u_distance_4, u_distance_5, u_distance_6, u_distance_7, u_distance_8, u_distance_9, u_distance_10, u_distance_11, u_distance_12, u_distance_13, u_distance_14, u_distance_15, u_distance_16, u_distance_17, u_distance_18, u_distance_19, u_distance_20;
+  	uncontrollable u_distance;
 
 	location:
 	initial; marked;
-	edge u_distance_0 do distance := 0;
-	edge u_distance_1 do distance := 1;
-	edge u_distance_2 do distance := 2;
-	edge u_distance_3 do distance := 3;
-	edge u_distance_4 do distance := 4;
-	edge u_distance_5 do distance := 5;
-	edge u_distance_6 do distance := 6;
-	edge u_distance_7 do distance := 7;
-	edge u_distance_8 do distance := 8;
-	edge u_distance_9 do distance := 9;
-	edge u_distance_10 do distance := 10;
-	edge u_distance_11 do distance := 11;
-	edge u_distance_12 do distance := 12;
-	edge u_distance_13 do distance := 13;
-	edge u_distance_14 do distance := 14;
-	edge u_distance_15 do distance := 15;
-	edge u_distance_16 do distance := 16;
-	edge u_distance_17 do distance := 17;
-	edge u_distance_18 do distance := 18;
-	edge u_distance_19 do distance := 19;
-	edge u_distance_20 do distance := 20;
+	edge u_distance do distance := i_distance;
 end
 
 plant ROS_Environment_Scanner:
@@ -82,11 +62,98 @@ plant ROS_Web_Controller:
 	initial; marked;
 end
 
+
+plant ROS_Robot_Platform:
+	input int[0..20] i_robot_x;
+	input int[0..20] i_robot_y;
+	disc int[0..20] robot_x = 0;
+	disc int[0..20] robot_y = 0;
+
+  	uncontrollable u_robot_x, u_robot_y;
+
+	location:
+	initial; marked;
+	edge u_robot_x do robot_x := i_robot_x;
+	edge u_robot_y do robot_y := i_robot_y;
+end
+
+
+plant ROS_Node_Robot_Platform_Service_Time_Since_Start:
+    input int[0..100] i_result;
+	disc int[0..100] result = 0;
+
+	controllable c_trigger, c_reset;
+	uncontrollable u_response, u_error;
+
+	location idle:
+	initial; marked;
+	edge c_trigger goto awaiting_response;
+
+	location awaiting_response:
+	edge u_response do result := i_result goto received_response;
+	edge u_error goto error;
+
+	location error:
+	edge c_reset goto idle;
+
+	location received_response:
+	edge c_reset goto idle;
+
+end
+
+
+plant ROS_Node_Obstacle_Destroyer_Action_Destroy:
+	input bool i_result;
+	input int[0..100] i_feedback;
+	disc bool result;
+	disc int[0..100] feedback;
+
+	disc int[0..20] input_x = 0;
+	disc int[0..20] input_y = 0;
+
+	controllable c_reset, c_trigger;
+	uncontrollable u_succeeded, u_aborted, u_feedback;
+
+	location idle:
+	initial; marked;
+	edge c_trigger when ROS_Node_Robot_Platform.left do input_x := ROS_Robot_Platform.robot_x - 1, input_y := ROS_Robot_Platform.robot_y goto executing;
+	edge c_trigger when ROS_Node_Robot_Platform.right do input_x := ROS_Robot_Platform.robot_x + 1, input_y := ROS_Robot_Platform.robot_y goto executing;
+	edge c_trigger when ROS_Node_Robot_Platform.up do input_x := ROS_Robot_Platform.robot_x, input_y := ROS_Robot_Platform.robot_y + 1 goto executing;
+	edge c_trigger when ROS_Node_Robot_Platform.down do input_x := ROS_Robot_Platform.robot_x, input_y := ROS_Robot_Platform.robot_y - 1 goto executing;
+
+	location executing:
+	edge u_feedback do feedback := i_feedback goto received_feedback;
+	edge u_succeeded do result := i_result goto finished;
+	edge u_aborted goto aborted;
+
+	location received_feedback:
+	edge u_feedback do feedback := i_feedback goto received_feedback;
+	edge u_succeeded do result := i_result goto finished;
+	edge u_aborted goto aborted;
+
+	location aborted:
+	edge c_reset goto idle;
+
+	location finished:
+	edge c_reset goto idle;
+end
+
+// Ensure that service calls are processed before
+requirement ROS_Node_Robot_Platform.c_move_forward needs ROS_Node_Robot_Platform_Service_Time_Since_Start.received_response;
+requirement ROS_Node_Robot_Platform.c_rotate_left needs ROS_Node_Robot_Platform_Service_Time_Since_Start.received_response;
+requirement ROS_Node_Robot_Platform.c_rotate_right needs ROS_Node_Robot_Platform_Service_Time_Since_Start.received_response;
+requirement ROS_Node_Robot_Platform.c_rotate_up needs ROS_Node_Robot_Platform_Service_Time_Since_Start.received_response;
+requirement ROS_Node_Robot_Platform.c_rotate_down needs ROS_Node_Robot_Platform_Service_Time_Since_Start.received_response;
+
+// Remove obstacle only if close
+requirement invariant ROS_Node_Obstacle_Destroyer_Action_Destroy.c_trigger needs ROS_Distance_Sensor.distance = 0;
+
 // Move forward if safe
-requirement invariant ROS_Node_Robot_Platform.c_move_forward needs ROS_Distance_Sensor.distance > 0;
+requirement invariant ROS_Node_Robot_Platform.c_move_forward needs ROS_Distance_Sensor.distance > 0 and ROS_Node_Robot_Platform_Service_Time_Since_Start.result <= 120;
 
 // Rotation
-requirement invariant ROS_Node_Robot_Platform.c_rotate_left needs ROS_Distance_Sensor.distance = 0;
-requirement invariant ROS_Node_Robot_Platform.c_rotate_right needs ROS_Distance_Sensor.distance = 0;
-requirement invariant ROS_Node_Robot_Platform.c_rotate_up needs ROS_Distance_Sensor.distance = 0;
-requirement invariant ROS_Node_Robot_Platform.c_rotate_down needs ROS_Distance_Sensor.distance = 0;
+requirement invariant ROS_Node_Robot_Platform.c_rotate_left needs ROS_Node_Obstacle_Destroyer_Action_Destroy.idle and not ROS_Node_Robot_Platform.left and ROS_Distance_Sensor.distance <= 0 and ROS_Node_Robot_Platform_Service_Time_Since_Start.result <= 120;
+requirement invariant ROS_Node_Robot_Platform.c_rotate_right needs ROS_Node_Obstacle_Destroyer_Action_Destroy.idle and not ROS_Node_Robot_Platform.right and ROS_Distance_Sensor.distance <= 0 and ROS_Node_Robot_Platform_Service_Time_Since_Start.result <= 120;
+requirement invariant ROS_Node_Robot_Platform.c_rotate_up needs ROS_Node_Obstacle_Destroyer_Action_Destroy.idle and not ROS_Node_Robot_Platform.up and ROS_Distance_Sensor.distance <= 0 and ROS_Node_Robot_Platform_Service_Time_Since_Start.result <= 120;
+requirement invariant ROS_Node_Robot_Platform.c_rotate_down needs ROS_Node_Obstacle_Destroyer_Action_Destroy.idle and not ROS_Node_Robot_Platform.down and ROS_Distance_Sensor.distance <= 0 and ROS_Node_Robot_Platform_Service_Time_Since_Start.result <= 120;
+

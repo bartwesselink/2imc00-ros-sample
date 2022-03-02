@@ -29,7 +29,7 @@ class Server:
         t.start()
     
     def _run(self):
-        self._app.run(host=self._host, port=self._port)
+        self._app.run(host=self._host, port=self._port, quiet=True)
 
     def _index(self):
         return static_file("index.html", root=self._root)

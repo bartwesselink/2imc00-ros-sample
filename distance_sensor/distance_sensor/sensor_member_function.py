@@ -47,10 +47,13 @@ class DistanceSensor(Node):
     def compute_distance_of_array(self, parts):
         i = 0
         for x in parts:
-            if x == 1: # if obstacle
+            if x > 0: # if obstacle
                 return i
 
             i = i + 1
+
+        if i == 0:
+            return -1 # appearantly, we are in front of a wall
 
         return i
 
@@ -108,7 +111,7 @@ class DistanceSensor(Node):
 
     def calculate_distance(self):
         if self.x == 0 or self.y == 0 or len(self.current_environment) == 0:
-            return 0
+            return -1
 
         if self.rotation == 1:
             return self.distance_to_right()
@@ -123,7 +126,7 @@ class DistanceSensor(Node):
             return self.distance_to_top()
 
         # calculate distance
-        return 0
+        return -1
 
     def emit_value(self, value):
         msg = Int16()

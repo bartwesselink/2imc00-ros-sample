@@ -1,6 +1,7 @@
 /**
  * Headers and inline functions of the runtime support for the CIF to C99 translation.
  */
+
 #ifndef CIF_C_GPP_CODEGEN_LIBRARY_H
 #define CIF_C_GPP_CODEGEN_LIBRARY_H
 
@@ -26,7 +27,6 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
-#include <time.h>
 
 /* Define max string length if not defined. */
 #ifndef MAX_STRING_SIZE
@@ -61,10 +61,7 @@ static inline IntType StringTypeSize(StringType *str) {
     /* strnlen */
     IntType length = 0;
     const char *k = str->data;
-    while (length < MAX_STRING_SIZE && *k) {
-        length++;
-        k++;
-    }
+    while (length < MAX_STRING_SIZE && *k) { length++; k++; }
     assert(length < MAX_STRING_SIZE); // String should have a terminating nul-character.
 
     return length;
@@ -75,19 +72,19 @@ void StringTypeProject(StringType *dst, StringType *src, IntType index);
 
 /* Cast functions. */
 BoolType StringToBool(StringType *s);
-IntType StringToInt(StringType *s);
+IntType  StringToInt(StringType *s);
 RealType StringToReal(StringType *s);
 
 void BoolToString(BoolType b, StringType *s);
-void IntToString(IntType i, StringType *s);
+void  IntToString(IntType i, StringType *s);
 void RealToString(RealType r, StringType *s);
 
 /* Format functions. */
 enum FormatFlags {
-    FMTFLAGS_NONE = 0,
-    FMTFLAGS_LEFT = 1 << 0,
-    FMTFLAGS_SIGN = 1 << 1,
-    FMTFLAGS_SPACE = 1 << 2,
+    FMTFLAGS_NONE   = 0,
+    FMTFLAGS_LEFT   = 1 << 0,
+    FMTFLAGS_SIGN   = 1 << 1,
+    FMTFLAGS_SPACE  = 1 << 2,
     FMTFLAGS_ZEROES = 1 << 3,
     FMTFLAGS_GROUPS = 1 << 4,
 };

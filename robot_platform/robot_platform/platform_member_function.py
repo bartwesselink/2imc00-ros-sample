@@ -2,12 +2,13 @@ import rclpy
 from rclpy.node import Node
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+from communication_interfaces.srv import TimeSinceStart 
 
 from std_msgs.msg import Int16MultiArray, Int16, Empty
 
 class Platform(Node):
-    x = 1
-    y = 1
+    x = 9
+    y = 9
     rotation = 1
 
     def __init__(self):
@@ -24,8 +25,17 @@ class Platform(Node):
         self.subscription_up = self.create_subscription(Empty, 'rotate_up', self.up, 10)
         self.subscription_down = self.create_subscription(Empty, 'rotate_down', self.down, 10)
 
+
+        self.time_started = time.time()
+        self.service_time_since_start = self.create_service(TimeSinceStart, 'time_since_start', self.time_since_start_callback)
+
         self.timer = self.create_timer(0.5, self.emit_all)
         self.emit_all()
+
+    def time_since_start_callback(self, request, response):
+        response.result = int(time.time() - self.time_started)
+
+        return response
 
     def forward(self, msg):
         if self.rotation == 1:
